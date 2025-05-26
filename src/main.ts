@@ -8,6 +8,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
 
+  const port = process.env.PORT || 3000;
+
   app.setGlobalPrefix('api');
 
   app.enableCors();
@@ -28,7 +30,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
 
-  await app.listen(process.env.PORT);
-  logger.log(`App running on port ${ process.env.PORT }`);
+  await app.listen(port);
+  logger.log(`App running on port ${port}`);
 }
 bootstrap();
