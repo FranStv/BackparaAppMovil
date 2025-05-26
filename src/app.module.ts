@@ -45,7 +45,7 @@ import { StripeModule } from './stripe/stripe.module';
 
     AuthModule,
 
-    MessagesWsModule,
+    // MessagesWsModule,
 
     StripeModule,
 

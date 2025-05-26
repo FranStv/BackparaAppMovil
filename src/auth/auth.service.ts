@@ -21,31 +21,31 @@ export class AuthService {
   ) {}
 
 
-  async create( createUserDto: CreateUserDto) {
+  // async create( createUserDto: CreateUserDto) {
     
-    try {
+  //   try {
 
-      const { password, ...userData } = createUserDto;
+  //     const { password, ...userData } = createUserDto;
       
-      const user = this.userRepository.create({
-        ...userData,
-        password: bcrypt.hashSync( password, 10 )
-      });
+  //     const user = this.userRepository.create({
+  //       ...userData,
+  //       password: bcrypt.hashSync( password, 10 )
+  //     });
 
-      await this.userRepository.save( user )
-      delete user.password;
+  //     await this.userRepository.save( user )
+  //     delete user.password;
 
-      return {
-        user: user,
-        token: this.getJwtToken({ id: user.id })
-      };
-      // TODO: Retornar el JWT de acceso
+  //     return {
+  //       user: user,
+  //       token: this.getJwtToken({ id: user.id })
+  //     };
+  //     // TODO: Retornar el JWT de acceso
 
-    } catch (error) {
-      this.handleDBErrors(error);
-    }
+  //   } catch (error) {
+  //     this.handleDBErrors(error);
+  //   }
 
-  }
+  // }
 
   async login( loginUserDto: LoginUserDto ) {
 

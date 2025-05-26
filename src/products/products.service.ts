@@ -138,10 +138,10 @@ export class ProductsService {
     }
   }
 
-  async remove(id: string) {
-    const product = await this.findOne(id);
-    await this.productRepository.remove(product);
-  }
+  // async remove(id: string) {
+  //   const product = await this.findOne(id);
+  //   await this.productRepository.remove(product);
+  // }
 
   private handleDBExceptions(error: any) {
     if (error.code === '23505') throw new BadRequestException(error.detail);

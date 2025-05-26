@@ -20,10 +20,10 @@ export class AuthController {
 
 
 
-  @Post('register')
-  createUser(@Body() createUserDto: CreateUserDto ) {
-    return this.authService.create( createUserDto );
-  }
+  // @Post('register')
+  // createUser(@Body() createUserDto: CreateUserDto ) {
+  //   return this.authService.create( createUserDto );
+  // }
 
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto ) {
@@ -42,7 +42,7 @@ export class AuthController {
   @Get('private')
   @UseGuards( AuthGuard() )
   testingPrivateRoute(
-    @Req() request: Express.Request,
+    // @Req() request: Express.Request,
     @GetUser() user: User,
     @GetUser('email') userEmail: string,
     
