@@ -14,10 +14,24 @@ export class StripeService {
   }
 
   async createPaymentIntent(amount: number, method: 'card' | 'oxxo') {
-    return await this.stripe.paymentIntents.create({
-      amount, // en centavos
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      amount,
       currency: 'mxn',
       payment_method_types: [method],
     });
+
+    if (method === 'oxxo') {
+      // Confirma el intent para que Stripe genere el voucher de pago
+      const confirmedIntent = await this.stripe.paymentIntents.confirm(
+        paymentIntent.id,
+        {
+          payment_method: 'oxxo',
+          // puedes agregar datos de facturación si lo deseas
+        },
+      );
+      return confirmedIntent;
+    }
+    // Para tarjeta, solo regresa el intent creado
+    return paymentIntent;
   }
 }

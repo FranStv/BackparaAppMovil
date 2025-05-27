@@ -4,7 +4,7 @@ import { StripeController } from './stripe.controller';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [ConfigModule], // <-- AGREGA AQUÍ TAMBIÉN
+    imports: [ConfigModule],
   providers: [StripeService],
   controllers: [StripeController],
 })

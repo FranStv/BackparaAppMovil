@@ -6,14 +6,14 @@ import { AuthGuard } from '@nestjs/passport';
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
-  @UseGuards(AuthGuard('jwt')) // Protege con JWT
+  @UseGuards(AuthGuard('jwt'))
   @Post('create-payment-intent')
   async createPaymentIntent(
     @Request() req,
     @Body('amount') amount: number,
     @Body('method') method: 'card' | 'oxxo',
   ) {
-    // req.user contiene el usuario autenticado
+    
     const paymentIntent = await this.stripeService.createPaymentIntent(amount, method);
 
     // Incluye el voucher url para OXXO si aplica
@@ -29,7 +29,7 @@ export class StripeController {
     return {
       clientSecret: paymentIntent.client_secret,
       paymentIntent,
-      voucherUrl, // Este campo solo estará si es OXXO
+      voucherUrl,
     };
   }
 }
