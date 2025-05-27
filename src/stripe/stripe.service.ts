@@ -17,6 +17,7 @@ export class StripeService {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount,
       currency: 'mxn',
+      
       payment_method_types: [method],
     });
 
