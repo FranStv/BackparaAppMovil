@@ -21,13 +21,23 @@ export class StripeService {
     });
 
     if (method === 'oxxo') {
+      // ⚡️ Aquí va el fix: se requiere payment_method_data con type y oxxo[country]
       const confirmedIntent = await this.stripe.paymentIntents.confirm(
         paymentIntent.id,
+        {
+          payment_method_data: {
+            type: 'oxxo',
+            oxxo: { country: 'mx' }, // Obligatorio para OXXO
+            billing_details: {
+              name: 'Juan Perez', // Puedes recibirlo del frontend
+              email: 'juan@correo.com', // Puedes recibirlo del frontend
+            },
+          },
+        },
       );
       return confirmedIntent;
     }
 
-    // Para tarjeta, solo regresa el intent creado
     return paymentIntent;
   }
 }
