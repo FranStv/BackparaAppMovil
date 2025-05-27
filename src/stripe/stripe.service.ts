@@ -26,8 +26,7 @@ export class StripeService {
         paymentIntent.id,
         {
           payment_method_data: {
-            type: 'oxxo',
-            oxxo: { country: 'mx' }, // Obligatorio para OXXO
+            type: 'oxxo',            
             billing_details: {
               name: 'Juan Perez', // Puedes recibirlo del frontend
               email: 'juan@correo.com', // Puedes recibirlo del frontend
