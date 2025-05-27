@@ -21,16 +21,12 @@ export class StripeService {
     });
 
     if (method === 'oxxo') {
-      // Confirma el intent para que Stripe genere el voucher de pago
       const confirmedIntent = await this.stripe.paymentIntents.confirm(
         paymentIntent.id,
-        {
-          payment_method: 'oxxo',
-          // puedes agregar datos de facturación si lo deseas
-        },
       );
       return confirmedIntent;
     }
+
     // Para tarjeta, solo regresa el intent creado
     return paymentIntent;
   }
