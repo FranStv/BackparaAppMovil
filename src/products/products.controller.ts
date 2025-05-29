@@ -20,7 +20,7 @@ import { PaginationDto } from './../common/dtos/pagination.dto';
 import { Auth, GetUser } from '../auth/decorators';
 import { User } from '../auth/entities/user.entity';
 import { ValidRoles } from '../auth/interfaces';
-import { DecrementStockDto } from './dto/ecrement-stock.dto';
+import { DecrementStockDto } from './dto/decrement-stock.dto';
 
 @ApiTags('Products')
 @Controller('products')
@@ -68,8 +68,8 @@ export class ProductsController {
   // }
 
   @Patch('decrement-stock')
-  @Auth() // O sin Auth si lo necesitas abierto
-  async decrementStock(@Body() body: DecrementStockDto) {
-    return this.productsService.decrementStock(body.items);
+  @Auth()
+  async decrementStock(@Body() items: { id: string; quantity: number }[]) {
+    return this.productsService.decrementStock(items);
   }
 }
