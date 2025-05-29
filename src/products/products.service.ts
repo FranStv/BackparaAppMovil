@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+// import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 import { validate as isUUID } from 'uuid';
@@ -100,43 +100,43 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
-    const { images, ...toUpdate } = updateProductDto;
+  // async update(id: string, updateProductDto: UpdateProductDto, user: User) {
+  //   const { images, ...toUpdate } = updateProductDto;
 
-    const product = await this.productRepository.preload({ id, ...toUpdate });
+  //   const product = await this.productRepository.preload({ id, ...toUpdate });
 
-    if (!product)
-      throw new NotFoundException(`Product with id: ${id} not found`);
+  //   if (!product)
+  //     throw new NotFoundException(`Product with id: ${id} not found`);
 
-    // Create query runner
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  //   // Create query runner
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
 
-    try {
-      if (images) {
-        await queryRunner.manager.delete(ProductImage, { product: { id } });
+  //   try {
+  //     if (images) {
+  //       await queryRunner.manager.delete(ProductImage, { product: { id } });
 
-        product.images = images.map((image) =>
-          this.productImageRepository.create({ url: image }),
-        );
-      }
+  //       product.images = images.map((image) =>
+  //         this.productImageRepository.create({ url: image }),
+  //       );
+  //     }
 
-      // await this.productRepository.save( product );
-      product.user = user;
+  //     // await this.productRepository.save( product );
+  //     product.user = user;
 
-      await queryRunner.manager.save(product);
+  //     await queryRunner.manager.save(product);
 
-      await queryRunner.commitTransaction();
-      await queryRunner.release();
+  //     await queryRunner.commitTransaction();
+  //     await queryRunner.release();
 
-      return this.findOnePlain(id);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      await queryRunner.release();
-      this.handleDBExceptions(error);
-    }
-  }
+  //     return this.findOnePlain(id);
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     await queryRunner.release();
+  //     this.handleDBExceptions(error);
+  //   }
+  // }
 
   // async remove(id: string) {
   //   const product = await this.findOne(id);
@@ -160,6 +160,42 @@ export class ProductsService {
       return await query.delete().where({}).execute();
     } catch (error) {
       this.handleDBExceptions(error);
+    }
+  }
+
+  // src/products/products.service.ts
+
+  async decrementStock(items: { id: string; quantity: number }[]) {
+    // Si manejas muchas operaciones, usa transacción
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      for (const item of items) {
+        const product = await queryRunner.manager.findOne(Product, {
+          where: { id: item.id },
+        });
+        if (!product)
+          throw new NotFoundException(
+            `Producto con id ${item.id} no encontrado`,
+          );
+        if (product.stock < item.quantity)
+          throw new BadRequestException(
+            `Stock insuficiente de ${product.title}`,
+          );
+
+        product.stock -= item.quantity;
+        await queryRunner.manager.save(product);
+      }
+
+      await queryRunner.commitTransaction();
+      return { ok: true };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 }
